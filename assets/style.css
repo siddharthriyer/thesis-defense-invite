@@ -309,7 +309,10 @@ body.tint-light .backdrop::after{
 }
 .actions{ margin-top:2.3rem; display:flex; justify-content:center; }
 .actions-split{ gap:.8rem; }
-.actions-split > *{ flex:1; }
+/* min-width:0 is load bearing: without it a flex item refuses to shrink below
+   its min-content width, and a long label like "APPLE · OUTLOOK" pushes the
+   pair straight out through the side of the card on a narrow phone. */
+.actions-split > *{ flex:1 1 0; min-width:0; }
 
 /* — form — */
 #rsvp-form{ text-align:left; margin-top:.4rem; }
@@ -409,6 +412,12 @@ body.tint-light .backdrop::after{
 }
 .sound-title.shown{ opacity:1; transform:none; }
 @media (max-width:520px){ .sound-title{ display:none; } }
+
+/* narrow phones: give the paired buttons room to breathe */
+@media (max-width:400px){
+  .btn{ padding:.72rem .75rem; font-size:.68rem; letter-spacing:.12em; }
+  .actions-split{ gap:.55rem; }
+}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ transition-duration:.01ms !important; animation-duration:.01ms !important; }
