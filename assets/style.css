@@ -263,12 +263,12 @@ body.tint-light .backdrop::after{
   /* the clip opens well before the envelope has finished fading, so the card's
      lower edge is never seen as a hard cut against the bare background */
   transition:transform 1.05s var(--ease), clip-path .38s var(--ease), opacity .5s ease;
-  max-height:92vh; overflow-y:auto; overscroll-behavior:contain;
+  max-height:94vh; overflow-y:auto; overscroll-behavior:contain;
 }
 
 .card-inner{
   position:relative;
-  padding:clamp(2.6rem,7vw,3.6rem) clamp(1.9rem,6vw,3.2rem);
+  padding:clamp(2.2rem,6vw,2.9rem) clamp(1.9rem,6vw,3.2rem);
 }
 .card-inner::before{
   content:""; position:absolute; inset:clamp(9px,2.4vw,14px);
@@ -280,7 +280,7 @@ body.tint-light .backdrop::after{
 
 /* — type — */
 .eyebrow{
-  margin:0 0 1.25rem;
+  margin:0 0 1rem;
   font-size:.68rem; letter-spacing:.3em; text-transform:uppercase;
   color:var(--ink-faint);
 }
@@ -295,7 +295,7 @@ body.tint-light .backdrop::after{
 }
 .ornament{
   display:flex; align-items:center; justify-content:center; gap:.8rem;
-  margin:1.8rem auto; width:min(100%,190px); color:var(--ink-faint);
+  margin:1.3rem auto; width:min(100%,190px); color:var(--ink-faint);
 }
 .ornament i{ flex:1; height:1px; background:var(--rule); }
 .ornament span{ font-size:.5rem; line-height:1; }
@@ -306,12 +306,12 @@ body.tint-light .backdrop::after{
   margin:0; font-size:1.02rem; line-height:1.7; color:var(--ink);
   text-wrap:pretty;
 }
-.lines > div + div{ margin-top:.9rem; }
+.lines > div + div{ margin-top:.72rem; }
 .footer-line{
   margin:1.9rem 0 0; font-family:var(--display); font-style:italic;
   font-size:1rem; color:var(--ink-soft);
 }
-.actions{ margin-top:2.3rem; display:flex; justify-content:center; }
+.actions{ margin-top:1.8rem; display:flex; justify-content:center; }
 .actions-split{ gap:.8rem; }
 /* min-width:0 is load bearing: without it a flex item refuses to shrink below
    its min-content width, and a long label like "APPLE · OUTLOOK" pushes the
