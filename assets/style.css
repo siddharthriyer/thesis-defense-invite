@@ -46,21 +46,38 @@ body{
 
 /* ═══════════════════  backdrop photograph  ══════════════════ */
 /* Revealed as the envelope opens, so the gate stays quiet and abstract.
-   Only applied once the image has actually loaded — a missing file simply
-   leaves the paper gradient in place. */
+   The photograph and the scrim over it are separate layers: the blur belongs
+   to the picture alone, and must not soften the veil that keeps the card
+   legible. `tint` picks a dark veil or a light one — a bright photograph
+   turns to mud under a dark scrim. */
 .backdrop{
   position:fixed; inset:0; z-index:0;
-  background-position:center; background-size:cover; background-repeat:no-repeat;
-  transform:scale(1.04);                 /* keeps blurred edges off screen */
-  filter:blur(var(--bd-blur,0px));
   opacity:0; transition:opacity 1.6s ease;
 }
 body.has-backdrop .backdrop{ opacity:1; }
+
+.backdrop::before,
+.backdrop::after{ content:""; position:absolute; inset:0; }
+
+.backdrop::before{
+  background-image:var(--bd-img);
+  background-position:center; background-size:cover; background-repeat:no-repeat;
+  filter:blur(var(--bd-blur,0px));
+  transform:scale(var(--bd-scale,1.04));   /* keeps blurred edges off screen */
+}
+
+/* dark veil — the default, for bright-on-dark photographs */
 .backdrop::after{
-  content:""; position:absolute; inset:0;
   background:radial-gradient(125% 105% at 50% 42%,
     rgba(30,23,16,calc(var(--bd-dim,.5) * .58)) 0%,
     rgba(24,18,12,var(--bd-dim,.5)) 100%);
+}
+
+/* light veil — washes a bright photograph back to a pastel ground */
+body.tint-light .backdrop::after{
+  background:radial-gradient(125% 105% at 50% 42%,
+    rgba(247,242,233,calc(var(--bd-dim,.5) * .72)) 0%,
+    rgba(226,217,201,var(--bd-dim,.5)) 100%);
 }
 
 .grain{

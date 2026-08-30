@@ -216,9 +216,18 @@ function loadBackdrop() {
 
   const img = new Image();
   img.onload = () => {
-    $("#backdrop").style.backgroundImage = `url("${b.image}")`;
-    if (b.dim != null) document.documentElement.style.setProperty("--bd-dim", b.dim);
-    if (b.blur) document.documentElement.style.setProperty("--bd-blur", `${b.blur}px`);
+    const root = document.documentElement.style;
+    // Absolute on purpose: a relative url() inside a custom property is
+    // resolved against the stylesheet that consumes it (assets/style.css),
+    // not against the page — which would look for assets/assets/…
+    root.setProperty("--bd-img", `url("${new URL(b.image, location.href).href}")`);
+    if (b.dim != null) root.setProperty("--bd-dim", b.dim);
+    if (b.blur) {
+      root.setProperty("--bd-blur", `${b.blur}px`);
+      // scale up with the blur, or its soft edge creeps into frame
+      root.setProperty("--bd-scale", (1.04 + b.blur * 0.006).toFixed(3));
+    }
+    if (b.tint === "light") document.body.classList.add("tint-light");
     backdropReady = true;
     paintBackdrop();
   };
