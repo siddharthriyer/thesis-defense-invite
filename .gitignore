@@ -2,3 +2,12 @@
 content.json
 
 .DS_Store
+
+# Tooling and notes — kept on this machine, not published.
+# The site only needs index.html, assets/, invite.enc.json and .nojekyll.
+README.md
+seal.py
+content.example.json
+apps-script/
+assets/BACKDROP.md
+assets/audio/README.md
