@@ -44,6 +44,25 @@ body{
   overflow-x:hidden;
 }
 
+/* ═══════════════════  backdrop photograph  ══════════════════ */
+/* Revealed as the envelope opens, so the gate stays quiet and abstract.
+   Only applied once the image has actually loaded — a missing file simply
+   leaves the paper gradient in place. */
+.backdrop{
+  position:fixed; inset:0; z-index:0;
+  background-position:center; background-size:cover; background-repeat:no-repeat;
+  transform:scale(1.04);                 /* keeps blurred edges off screen */
+  filter:blur(var(--bd-blur,0px));
+  opacity:0; transition:opacity 1.6s ease;
+}
+body.has-backdrop .backdrop{ opacity:1; }
+.backdrop::after{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(125% 105% at 50% 42%,
+    rgba(30,23,16,calc(var(--bd-dim,.5) * .58)) 0%,
+    rgba(24,18,12,var(--bd-dim,.5)) 100%);
+}
+
 .grain{
   position:fixed; inset:0; z-index:100; pointer-events:none; opacity:.30;
   mix-blend-mode:multiply;
@@ -52,7 +71,7 @@ body{
 
 /* ═════════════════════════  the stage  ════════════════════════ */
 .stage{
-  position:fixed; inset:0;
+  position:fixed; inset:0; z-index:1;
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
   gap:clamp(2rem,7vh,3.6rem);
@@ -329,6 +348,50 @@ body{
 .card-body{ transition:height .5s var(--ease); }
 .pane{ transition:opacity .34s ease; }
 .pane.fading{ opacity:0; }
+
+/* ══════════════════════  sound control  ═════════════════════ */
+.sound{
+  position:fixed; z-index:70;
+  right:clamp(1rem,3.5vw,2.2rem); bottom:clamp(1rem,3.5vw,2.2rem);
+  display:flex; align-items:center; gap:.7rem;
+  opacity:0; pointer-events:none; transition:opacity .9s ease;
+}
+.sound.shown{ opacity:1; pointer-events:auto; }
+.sound[hidden]{ display:none; }
+
+.sound-btn{
+  flex:none; width:38px; height:38px; padding:0; cursor:pointer;
+  display:grid; place-items:center;
+  color:var(--ink); border:1px solid rgba(120,101,74,.34); border-radius:50%;
+  background:rgba(248,242,232,.74);
+  -webkit-backdrop-filter:blur(7px); backdrop-filter:blur(7px);
+  box-shadow:0 3px 10px -4px rgba(60,45,30,.4);
+  transition:background .35s var(--ease), color .35s var(--ease), border-color .3s ease;
+}
+.sound-btn:hover,.sound-btn:focus-visible{
+  background:var(--ink); color:var(--paper); border-color:var(--ink); outline:none;
+}
+.sound-btn svg{ width:19px; height:19px; }
+.sound-btn .slash{ opacity:0; transition:opacity .3s ease; }
+.sound-btn .wave{ opacity:1; transition:opacity .3s ease; }
+/* aria-pressed="false" means the music is off */
+.sound-btn[aria-pressed="false"] .wave{ opacity:0; }
+.sound-btn[aria-pressed="false"] .slash{ opacity:1; }
+
+/* the title drifts in when a piece begins, then bows out again */
+.sound-title{
+  max-width:min(46vw,270px);
+  font-size:.63rem; letter-spacing:.17em; text-transform:uppercase;
+  color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  padding:.44rem .8rem; border-radius:999px;
+  background:rgba(248,242,232,.74);
+  -webkit-backdrop-filter:blur(7px); backdrop-filter:blur(7px);
+  box-shadow:0 3px 10px -4px rgba(60,45,30,.35);
+  opacity:0; transform:translateX(8px);
+  transition:opacity .7s ease, transform .7s var(--ease);
+}
+.sound-title.shown{ opacity:1; transform:none; }
+@media (max-width:520px){ .sound-title{ display:none; } }
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ transition-duration:.01ms !important; animation-duration:.01ms !important; }

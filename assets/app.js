@@ -101,6 +101,9 @@ function render() {
     $("#c-lines").appendChild(d);
   });
 
+  loadBackdrop();
+  initMusic();
+
   // hide empty slots so the layout stays tight
   ["#c-eyebrow", "#c-subtitle", "#c-footer"].forEach((sel) => {
     const el = $(sel);
@@ -152,6 +155,8 @@ function open({ instant }) {
   const measurable = measure();
 
   if (instant || !measurable) {                       // returning visitor — no theatrics
+    revealBackdrop();
+    startMusic();
     $("#stage").classList.add("gone");
     card.style.transition = "none";
     card.classList.add("staged", "risen", "open");
@@ -167,8 +172,14 @@ function open({ instant }) {
   $("#gate").style.opacity = "0";
   $("#pw").blur();
 
+  startMusic();                                       // still inside the click
+
   at(120,  () => $("#seal").classList.add("broken"));
-  at(560,  () => { $("#flap").classList.add("open"); card.classList.add("staged"); });
+  at(560,  () => {
+    $("#flap").classList.add("open");
+    card.classList.add("staged");
+    revealBackdrop();
+  });
   at(1300, () => card.classList.add("risen"));
   at(2400, () => {
     $("#envelope").classList.add("dismissed");
@@ -179,8 +190,131 @@ function open({ instant }) {
 }
 
 function finish() {
+  $("#sound").classList.add("shown");
   $("#stage").style.display = "none";
   $("#card").focus?.();
+}
+
+/* ────────────────────  backdrop photograph  ───────────────────── */
+
+// Shown only once the file has really loaded, so a missing or misnamed
+// photograph leaves the plain paper gradient rather than a broken panel.
+//
+// Loading and revealing are kept apart on purpose. The photograph can only
+// start downloading after the payload is decrypted, so on a slow connection it
+// may still be in flight when the envelope opens; whichever of the two happens
+// last does the fade, and a late photograph simply eases in behind the card.
+let backdropReady = false, backdropWanted = false;
+
+function paintBackdrop() {
+  if (backdropReady && backdropWanted) document.body.classList.add("has-backdrop");
+}
+
+function loadBackdrop() {
+  const b = C.background;
+  if (!b || !b.image) return;
+
+  const img = new Image();
+  img.onload = () => {
+    $("#backdrop").style.backgroundImage = `url("${b.image}")`;
+    if (b.dim != null) document.documentElement.style.setProperty("--bd-dim", b.dim);
+    if (b.blur) document.documentElement.style.setProperty("--bd-blur", `${b.blur}px`);
+    backdropReady = true;
+    paintBackdrop();
+  };
+  img.src = b.image;
+}
+
+const revealBackdrop = () => { backdropWanted = true; paintBackdrop(); };
+
+/* ───────────────────────────  music  ──────────────────────────── */
+
+const audio = $("#audio");
+let tracks = [], track = 0, targetVol = 0.35, fade = null;
+
+function initMusic() {
+  const m = C.music;
+  if (!m || !Array.isArray(m.tracks) || !m.tracks.length) return;
+
+  tracks = m.shuffle ? m.tracks.slice().sort(() => Math.random() - 0.5) : m.tracks.slice();
+  targetVol = typeof m.volume === "number" ? m.volume : 0.35;
+  audio.volume = 0;
+
+  audio.addEventListener("ended", () => {
+    track = (track + 1) % tracks.length;
+    cue(track);
+    audio.play().catch(() => {});
+  });
+  // If a file is missing or the format is unplayable, step over it quietly.
+  // Once every track has failed, retire the control rather than leaving a
+  // dead button on the card — and stop, so we don't loop over the errors.
+  let failures = 0;
+  audio.addEventListener("error", () => {
+    if (++failures >= tracks.length) {
+      setSoundUI(false);
+      $("#sound").hidden = true;
+      return;
+    }
+    track = (track + 1) % tracks.length;
+    cue(track);
+    audio.play().catch(() => {});
+  });
+  audio.addEventListener("playing", () => { failures = 0; });
+
+  $("#sound").hidden = false;
+  $("#sound-btn").addEventListener("click", toggleMusic);
+}
+
+function cue(i) {
+  audio.src = tracks[i].src;
+  announce(tracks[i].title);
+}
+
+// Ramps the volume rather than snapping it — a nocturne should arrive quietly.
+// Deliberately a timer, not requestAnimationFrame: rAF is frozen in a
+// background tab, which would leave the music playing at silence for anyone
+// who opens the invitation in a new tab and switches to it afterwards.
+function ramp(to, ms, done) {
+  clearInterval(fade);
+  const from = audio.volume, t0 = Date.now(), tick = 40;
+  fade = setInterval(() => {
+    const k = Math.min(1, (Date.now() - t0) / ms);
+    audio.volume = Math.max(0, Math.min(1, from + (to - from) * k));
+    if (k >= 1) { clearInterval(fade); done?.(); }
+  }, tick);
+}
+
+// Must be called from the click that opens the envelope, or autoplay is refused.
+function startMusic() {
+  if (!tracks.length) return;
+  cue(track);
+  audio.play()
+    .then(() => { ramp(targetVol, 2600); setSoundUI(true); })
+    .catch(() => setSoundUI(false));   // blocked — leave it for the guest to start
+  $("#sound").classList.add("shown");
+}
+
+function toggleMusic() {
+  if (audio.paused) {
+    audio.play().then(() => { ramp(targetVol, 900); setSoundUI(true); }).catch(() => {});
+  } else {
+    ramp(0, 700, () => audio.pause());
+    setSoundUI(false);
+  }
+}
+
+function setSoundUI(on) {
+  $("#sound-btn").setAttribute("aria-pressed", on ? "true" : "false");
+}
+
+let announceTimer = null;
+function announce(title) {
+  const el = $("#sound-title");
+  if (!title) return;
+  el.textContent = title;
+  el.classList.add("shown");
+  clearTimeout(announceTimer);
+  announceTimer = setTimeout(() => el.classList.remove("shown"), 6500);
 }
 
 /* ───────────────────────  pane switching  ─────────────────────── */
