@@ -444,6 +444,7 @@ $("#rsvp-form").addEventListener("submit", async (e) => {
   const err  = $("#form-err");
   const send = $("#btn-send");
   err.hidden = true;
+  $("#form-fallback").hidden = true;
 
   const name  = $("#f-name").value.trim();
   const email = $("#f-email").value.trim();
@@ -497,13 +498,16 @@ $("#rsvp-form").addEventListener("submit", async (e) => {
         if (!r.ok) throw new Error("bad status");
       }
     } else {
-      console.warn("RSVP endpoint not configured — reply was not sent anywhere.");
+      // Never pretend a reply was recorded. Without somewhere to put it this
+      // has to read as a failure, or guests are thanked for nothing.
+      throw new Error("RSVP endpoint not configured");
     }
   } catch {
     send.disabled = false;
     send.textContent = "Send";
     err.textContent = "That didn’t go through. Please try once more.";
     err.hidden = false;
+    offerEmailFallback(payload);
     return;
   }
 
@@ -511,6 +515,26 @@ $("#rsvp-form").addEventListener("submit", async (e) => {
   send.disabled = false;
   send.textContent = "Send";
 });
+
+// A defense happens once. If the endpoint is unreachable — down, over its mail
+// quota, redeployed — the guest still needs a way to reach you, so hand them a
+// prepared email rather than a dead end.
+function offerEmailFallback({ name, email, attendance, note }) {
+  const to = (C.rsvp || {}).fallbackEmail;
+  if (!to) return;
+
+  const attending = { "in-person": "in person", remote: "remotely", regrets: "with regrets" }[attendance];
+  const body = [
+    `Name: ${name}`,
+    `Email: ${email}`,
+    `Attending: ${attending}`,
+    note ? `Note: ${note}` : "",
+  ].filter(Boolean).join("\n");
+
+  $("#form-mailto").href =
+    `mailto:${to}?subject=${encodeURIComponent("R.S.V.P. — " + name)}&body=${encodeURIComponent(body)}`;
+  $("#form-fallback").hidden = false;
+}
 
 function showConfirmation({ name, attendance }) {
   const first = name.split(/\s+/)[0];

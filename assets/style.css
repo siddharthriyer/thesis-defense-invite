@@ -354,6 +354,13 @@ body.tint-light .backdrop::after{
 .segmented input:nth-of-type(3):checked + label{ color:var(--paper); }
 
 .form-err{ margin:0 0 1rem; font-size:.85rem; font-style:italic; color:var(--wax); }
+.form-fallback{ margin:-.4rem 0 1.1rem; font-size:.85rem; }
+.form-fallback[hidden]{ display:none; }
+.form-fallback a{
+  font-style:italic; color:var(--ink-soft);
+  text-decoration:none; border-bottom:1px solid var(--rule);
+}
+.form-fallback a:hover{ color:var(--ink); border-bottom-color:var(--ink); }
 
 /* — confirmation — */
 .cal{ margin-top:2.1rem; }
