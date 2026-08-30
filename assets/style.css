@@ -299,10 +299,14 @@ body.tint-light .backdrop::after{
 }
 .ornament i{ flex:1; height:1px; background:var(--rule); }
 .ornament span{ font-size:.5rem; line-height:1; }
+/* Tuned for wrapped sentences, not single short lines. The leading inside a
+   sentence must be tighter than the gap between sentences, or a two-line
+   sentence reads as two separate ones. */
 .lines{
-  margin:0; font-size:1.02rem; line-height:2.05; color:var(--ink);
+  margin:0; font-size:1.02rem; line-height:1.7; color:var(--ink);
+  text-wrap:pretty;
 }
-.lines > div + div{ margin-top:.15rem; }
+.lines > div + div{ margin-top:.9rem; }
 .footer-line{
   margin:1.9rem 0 0; font-family:var(--display); font-style:italic;
   font-size:1rem; color:var(--ink-soft);
