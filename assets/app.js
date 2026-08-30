@@ -523,7 +523,7 @@ function offerEmailFallback({ name, email, attendance, note }) {
   const to = (C.rsvp || {}).fallbackEmail;
   if (!to) return;
 
-  const attending = { "in-person": "in person", remote: "remotely", regrets: "with regrets" }[attendance];
+  const attending = { "in-person": "in person", remote: "remotely", regrets: "cannot attend" }[attendance];
   const body = [
     `Name: ${name}`,
     `Email: ${email}`,
@@ -546,7 +546,7 @@ function showConfirmation({ name, attendance }) {
 
   $("#d-msg").textContent = msg;
   $("#d-eyebrow").textContent = attendance === "regrets" ? "Noted" : "Received";
-  $("#d-title").textContent   = attendance === "regrets" ? "With regrets" : "Thank you";
+  $("#d-title").textContent   = attendance === "regrets" ? "Another time" : "Thank you";
 
   const cal = $("#d-cal");
   cal.hidden = attendance === "regrets";

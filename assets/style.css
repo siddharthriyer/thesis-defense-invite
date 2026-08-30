@@ -339,8 +339,13 @@ body.tint-light .backdrop::after{
 .segmented input{ position:absolute; opacity:0; pointer-events:none; }
 .segmented label{
   flex:1; margin:0; padding:.72rem .3rem; cursor:pointer; z-index:2;
-  text-align:center; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  min-height:2.9em; line-height:1.25;
+  font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
   color:var(--ink-soft); transition:color .35s var(--ease);
+}
+@media (max-width:430px){
+  .segmented label{ letter-spacing:.08em; font-size:.66rem; padding:.72rem .15rem; }
 }
 .segmented-thumb{
   position:absolute; z-index:1; top:0; bottom:0; left:0; width:33.3333%;
