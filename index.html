@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invitation</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#e6ddd0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ─────────────────────────  ENVELOPE  ───────────────────────── -->
+<div class="stage" id="stage">
+  <div class="envelope-wrap">
+    <div class="envelope" id="envelope">
+      <div class="env-back"></div>
+
+      <!-- the card lives at document level so it can grow past the envelope -->
+
+      <div class="env-front">
+        <div class="f-left"></div>
+        <div class="f-right"></div>
+        <div class="f-bottom"></div>
+      </div>
+
+      <div class="env-flap" id="flap">
+        <div class="flap-face flap-outer"></div>
+        <div class="flap-face flap-inner"></div>
+      </div>
+
+      <!-- monogram on the wax seal — edit these initials -->
+      <div class="seal" id="seal"><span>SI</span></div>
+    </div>
+  </div>
+
+  <!-- ───────────────────────  PASSWORD GATE  ─────────────────── -->
+  <form class="gate" id="gate" autocomplete="off">
+    <label class="gate-label" for="pw">Enter the password from your invitation</label>
+    <div class="gate-row">
+      <input id="pw" type="password" name="password" spellcheck="false"
+             autocapitalize="off" autocomplete="off" aria-label="Password">
+      <button type="submit" class="btn btn-quiet" id="gate-btn">Open</button>
+    </div>
+    <p class="gate-err" id="gate-err" role="alert" hidden>That isn’t the right password.</p>
+  </form>
+</div>
+
+<!-- ───────────────────────────  CARD  ─────────────────────────── -->
+<article class="card" id="card" aria-live="polite">
+  <div class="card-inner">
+    <div class="card-body" id="card-body">
+
+      <!-- pane 1 · the invitation -->
+      <section class="pane" id="pane-invite">
+        <p class="eyebrow" id="c-eyebrow"></p>
+        <h1 class="title" id="c-title"></h1>
+        <p class="subtitle" id="c-subtitle"></p>
+        <div class="ornament"><i></i><span>&#9670;</span><i></i></div>
+        <div class="lines" id="c-lines"></div>
+        <p class="footer-line" id="c-footer"></p>
+        <div class="actions">
+          <button type="button" class="btn" id="btn-rsvp">R.S.V.P.</button>
+        </div>
+      </section>
+
+      <!-- pane 2 · the form -->
+      <section class="pane" id="pane-form" hidden>
+        <p class="eyebrow">R.S.V.P.</p>
+        <h2 class="title title-sm">Kindly reply</h2>
+        <div class="ornament"><i></i><span>&#9670;</span><i></i></div>
+
+        <form id="rsvp-form" novalidate>
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" required autocomplete="email">
+          </div>
+
+          <div class="field">
+            <span class="label-as-legend">Attending</span>
+            <div class="segmented" role="radiogroup" aria-label="Attending">
+              <input type="radio" id="a-person" name="attendance" value="in-person" checked>
+              <label for="a-person">In&nbsp;person</label>
+              <input type="radio" id="a-remote" name="attendance" value="remote">
+              <label for="a-remote">Remotely</label>
+              <input type="radio" id="a-no" name="attendance" value="regrets">
+              <label for="a-no">Regrets</label>
+              <span class="segmented-thumb" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="f-note">Note <em>(optional)</em></label>
+            <textarea id="f-note" name="note" rows="2"></textarea>
+          </div>
+
+          <p class="form-err" id="form-err" role="alert" hidden></p>
+
+          <div class="actions actions-split">
+            <button type="button" class="btn btn-quiet" id="btn-back">Back</button>
+            <button type="submit" class="btn" id="btn-send">Send</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- pane 3 · confirmation -->
+      <section class="pane" id="pane-done" hidden>
+        <p class="eyebrow" id="d-eyebrow">Received</p>
+        <h2 class="title title-sm" id="d-title">Thank you</h2>
+        <div class="ornament"><i></i><span>&#9670;</span><i></i></div>
+        <p class="lines" id="d-msg"></p>
+        <div class="cal" id="d-cal">
+          <p class="cal-label">Add to your calendar</p>
+          <div class="actions actions-split">
+            <a class="btn btn-quiet" id="cal-google" target="_blank" rel="noopener">Google</a>
+            <a class="btn btn-quiet" id="cal-ics" download="invitation.ics">Apple &middot; Outlook</a>
+          </div>
+        </div>
+        <p class="footer-line"><button type="button" class="linkish" id="btn-amend">Change your reply</button></p>
+      </section>
+
+    </div>
+  </div>
+</article>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
