@@ -15,34 +15,6 @@
 <div class="backdrop" id="backdrop" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<!-- ─────────────────────────  ENVELOPE  ───────────────────────── -->
-<div class="stage" id="stage">
-  <div class="envelope-wrap">
-    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open the invitation">
-      <div class="env-back"></div>
-
-      <!-- the card lives at document level so it can grow past the envelope -->
-
-      <div class="env-front">
-        <div class="f-left"></div>
-        <div class="f-right"></div>
-        <div class="f-bottom"></div>
-      </div>
-
-      <div class="env-flap" id="flap">
-        <div class="flap-face flap-outer"></div>
-        <div class="flap-face flap-inner"></div>
-      </div>
-
-      <!-- monogram on the wax seal — edit these initials -->
-      <div class="seal" id="seal"><span>SI</span></div>
-    </div>
-  </div>
-
-  <!-- opening it stays a click: browsers only let audio start from a gesture -->
-  <button type="button" class="open-btn" id="open-btn">Open</button>
-</div>
-
 <!-- ───────────────────────────  CARD  ─────────────────────────── -->
 <article class="card" id="card" aria-live="polite">
   <div class="card-inner">
@@ -53,18 +25,18 @@
         <p class="eyebrow" id="c-eyebrow"></p>
         <h1 class="title" id="c-title"></h1>
         <p class="subtitle" id="c-subtitle"></p>
-        <div class="ornament"><i></i><span>&#9670;</span><i></i></div>
+        <div class="rule"></div>
         <div class="lines" id="c-lines"></div>
         <p class="footer-line" id="c-footer"></p>
         <div class="actions">
-          <button type="button" class="btn" id="btn-rsvp">R.S.V.P.</button>
+          <button type="button" class="btn" id="btn-rsvp">RSVP</button>
         </div>
       </section>
 
       <!-- pane 2 · the form -->
       <section class="pane" id="pane-form" hidden>
-        <h2 class="title title-sm">R.S.V.P.</h2>
-        <div class="ornament"><i></i><span>&#9670;</span><i></i></div>
+        <h2 class="title title-sm">Reply</h2>
+        <div class="rule"></div>
 
         <form id="rsvp-form" novalidate>
           <div class="field">
@@ -80,11 +52,11 @@
             <span class="label-as-legend">Attending</span>
             <div class="segmented" role="radiogroup" aria-label="Attending">
               <input type="radio" id="a-person" name="attendance" value="in-person" checked>
-              <label for="a-person">In&nbsp;person</label>
+              <label for="a-person">In person</label>
               <input type="radio" id="a-remote" name="attendance" value="remote">
               <label for="a-remote">Remotely</label>
               <input type="radio" id="a-no" name="attendance" value="regrets">
-              <label for="a-no">Cannot&nbsp;attend</label>
+              <label for="a-no">Cannot attend</label>
               <span class="segmented-thumb" aria-hidden="true"></span>
             </div>
           </div>
@@ -110,7 +82,7 @@
       <section class="pane" id="pane-done" hidden>
         <p class="eyebrow" id="d-eyebrow">Received</p>
         <h2 class="title title-sm" id="d-title">Thank you</h2>
-        <div class="ornament"><i></i><span>&#9670;</span><i></i></div>
+        <div class="rule"></div>
         <p class="lines" id="d-msg"></p>
         <div class="cal" id="d-cal">
           <p class="cal-label">Add to your calendar</p>

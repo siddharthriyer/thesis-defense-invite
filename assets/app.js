@@ -13,26 +13,17 @@ let C = null;        // card content, once loaded
   try {
     C = await fetch("content.json", { cache: "no-store" }).then((r) => r.json());
   } catch {
-    $("#open-btn").textContent = "The invitation could not be loaded";
-    $("#open-btn").disabled = true;
+    document.body.classList.add("failed");
     return;
   }
   render();
+  // Deliberately not requestAnimationFrame: it does not fire in a background
+  // tab, which would leave someone who opens the link in one looking at a
+  // blank page. The initial state has already been painted by the time this
+  // fetch resolves, so the transition still runs.
+  document.body.classList.add("ready");        // fades the card and photograph in
+  startMusic();
 })();
-
-// One handler for the button and the envelope itself, so either opens it.
-let opened = false;
-function openInvitation() {
-  if (opened || !C) return;
-  opened = true;
-  open();
-}
-
-$("#open-btn").addEventListener("click", openInvitation);
-$("#envelope").addEventListener("click", openInvitation);
-$("#envelope").addEventListener("keydown", (e) => {
-  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openInvitation(); }
-});
 
 /* ─────────────────────────  rendering  ────────────────────────── */
 
@@ -59,102 +50,15 @@ function render() {
   });
 }
 
-/* ────────────────────  the opening sequence  ──────────────────── */
-
-function measure() {
-  // The card is portrait, the envelope landscape, so the card is scaled to the
-  // envelope's width and clipped at the envelope's bottom edge — the cut lands
-  // exactly where the paper ends, so the seam is never visible.
-  //
-  // Everything is keyed off the envelope's real rect: the open button sits
-  // below it, which pushes the envelope above the centre of the viewport.
-  const card = $("#card");
-  const er = $("#envelope").getBoundingClientRect();
-
-  card.style.setProperty("--c-scale", "1");
-  const w = card.offsetWidth, h = card.offsetHeight;
-  if (!er.width || !w || !h) {
-    card.style.removeProperty("--c-scale");
-    return false;
-  }
-
-  const s = Math.min(0.9, (er.width * 0.78) / w);
-  const ch = h * s, half = ch / 2;
-  const vc = window.innerHeight / 2;          // the card's untranslated centre
-
-  const topIn = er.top + 14;                              // resting inside
-  const topUp = Math.max(24, er.top - er.height * 0.34);  // drawn out, kept on screen
-
-  const y    = (top) => top + half - vc;
-  const clip = (top) => Math.max(0, Math.min(96, ((top + ch - er.bottom) / ch) * 100));
-
-  card.style.setProperty("--c-scale", s.toFixed(4));
-  card.style.setProperty("--c-y-in", `${y(topIn).toFixed(1)}px`);
-  card.style.setProperty("--c-y-up", `${y(topUp).toFixed(1)}px`);
-  card.style.setProperty("--c-clip-in", `${clip(topIn).toFixed(2)}%`);
-  card.style.setProperty("--c-clip-up", `${clip(topUp).toFixed(2)}%`);
-  return true;
-}
-
-function open() {
-  const card = $("#card");
-  // A zero-sized viewport (background tab, printing) makes the choreography
-  // meaningless — show the card outright instead.
-  const measurable = measure();
-
-  if (!measurable) {
-    revealBackdrop();
-    startMusic();
-    $("#stage").classList.add("gone");
-    card.style.transition = "none";
-    card.classList.add("staged", "risen", "open");
-    void card.offsetWidth;
-    card.style.transition = "";
-    finish();
-    return;
-  }
-
-  const at = (ms, fn) => setTimeout(fn, ms);
-
-  $("#open-btn").style.opacity = "0";
-  $("#open-btn").style.pointerEvents = "none";
-
-  startMusic();                                       // still inside the click
-
-  at(120,  () => $("#seal").classList.add("broken"));
-  at(560,  () => {
-    $("#flap").classList.add("open");
-    card.classList.add("staged");
-    revealBackdrop();
-  });
-  at(1300, () => card.classList.add("risen"));
-  at(2400, () => {
-    $("#envelope").classList.add("dismissed");
-    $("#stage").classList.add("gone");
-    card.classList.add("open");
-  });
-  at(3450, finish);
-}
-
-function finish() {
-  $("#sound").classList.add("shown");
-  $("#stage").style.display = "none";
-  $("#card").focus?.();
-}
-
 /* ────────────────────  backdrop photograph  ───────────────────── */
 
 // Shown only once the file has really loaded, so a missing or misnamed
 // photograph leaves the plain paper gradient rather than a broken panel.
 //
-// Loading and revealing are kept apart on purpose. The photograph can only
-// start downloading once the content has loaded, so on a slow connection it
-// may still be in flight when the envelope opens; whichever of the two happens
-// last does the fade, and a late photograph simply eases in behind the card.
-let backdropReady = false, backdropWanted = false;
-
+// The photograph only starts downloading once the content has loaded, so on a
+// slow connection it arrives after the card. It simply eases in behind it.
 function paintBackdrop() {
-  if (backdropReady && backdropWanted) document.body.classList.add("has-backdrop");
+  document.body.classList.add("has-backdrop");
 }
 
 function loadBackdrop() {
@@ -175,13 +79,10 @@ function loadBackdrop() {
       root.setProperty("--bd-scale", (1.04 + b.blur * 0.006).toFixed(3));
     }
     if (b.tint === "light") document.body.classList.add("tint-light");
-    backdropReady = true;
     paintBackdrop();
   };
   img.src = b.image;
 }
-
-const revealBackdrop = () => { backdropWanted = true; paintBackdrop(); };
 
 /* ───────────────────────────  music  ──────────────────────────── */
 
@@ -240,14 +141,31 @@ function ramp(to, ms, done) {
   }, tick);
 }
 
-// Must be called from the click that opens the envelope, or autoplay is refused.
+// There is no longer an opening click to ride on, and browsers refuse to start
+// audio without a gesture. So: try anyway, and if refused, start on the first
+// thing the guest does. The control is visible either way, so someone who
+// never touches the page can still choose to play it.
 function startMusic() {
   if (!tracks.length) return;
   cue(track);
   audio.play()
     .then(() => { ramp(targetVol, 2600); setSoundUI(true); })
-    .catch(() => setSoundUI(false));   // blocked — leave it for the guest to start
+    .catch(armFirstGesture);
   $("#sound").classList.add("shown");
+}
+
+function armFirstGesture() {
+  setSoundUI(false);
+  const go = () => {
+    disarm();
+    audio.play().then(() => { ramp(targetVol, 1800); setSoundUI(true); }).catch(() => {});
+  };
+  const disarm = () => {
+    for (const ev of ["pointerdown", "keydown", "wheel", "touchstart"])
+      document.removeEventListener(ev, go);
+  };
+  for (const ev of ["pointerdown", "keydown", "wheel", "touchstart"])
+    document.addEventListener(ev, go, { passive: true });
 }
 
 function toggleMusic() {

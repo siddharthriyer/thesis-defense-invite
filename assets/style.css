@@ -45,8 +45,7 @@ body{
 }
 
 /* ═══════════════════  backdrop photograph  ══════════════════ */
-/* Revealed as the envelope opens, so the gate stays quiet and abstract.
-   The photograph and the scrim over it are separate layers: the blur belongs
+/* The photograph and the scrim over it are separate layers: the blur belongs
    to the picture alone, and must not soften the veil that keeps the card
    legible. `tint` picks a dark veil or a light one — a bright photograph
    turns to mud under a dark scrim. */
@@ -55,6 +54,7 @@ body{
   opacity:0; transition:opacity 1.6s ease;
 }
 body.has-backdrop .backdrop{ opacity:1; }
+.backdrop{ transition-delay:.15s; }
 
 .backdrop::before,
 .backdrop::after{ content:""; position:absolute; inset:0; }
@@ -86,124 +86,6 @@ body.tint-light .backdrop::after{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
 }
 
-/* ═════════════════════════  the stage  ════════════════════════ */
-.stage{
-  position:fixed; inset:0; z-index:1;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  gap:clamp(2rem,7vh,3.6rem);
-  transition:opacity .7s var(--ease);
-}
-.stage.gone{ opacity:0; pointer-events:none; }
-
-.envelope-wrap{ position:relative; }
-
-.envelope{
-  position:relative;
-  width:var(--env-w); height:var(--env-h);
-  transition:transform 1s var(--ease), opacity .8s var(--ease);
-}
-.envelope.dismissed{ transform:translateY(26px) scale(.97); opacity:0; }
-
-/* — body of the envelope — */
-.env-back{
-  position:absolute; inset:0; z-index:10;
-  border-radius:3px;
-  background:linear-gradient(168deg, var(--paper-warm), var(--paper-cool));
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.7) inset,
-    0 26px 44px -22px rgba(70,52,32,.55),
-    0 3px 10px -4px rgba(70,52,32,.32);
-}
-
-/* — front pocket: three folded panels — */
-.env-front{ position:absolute; inset:0; z-index:30; border-radius:3px; overflow:hidden; }
-.env-front > div{ position:absolute; inset:0; }
-.f-left{
-  clip-path:polygon(0 0, 50.6% 47%, 0 100%);
-  background:linear-gradient(100deg,var(--paper-cool),var(--paper-warm));
-  box-shadow:1px 0 1px rgba(90,70,45,.10);
-}
-.f-right{
-  clip-path:polygon(100% 0, 49.4% 47%, 100% 100%);
-  background:linear-gradient(260deg,var(--paper-cool),var(--paper-warm));
-}
-.f-bottom{
-  clip-path:polygon(0 100.5%, 50% 34%, 100% 100.5%);
-  background:linear-gradient(0deg,var(--paper-warm) 30%, #f4ebdb 100%);
-  filter:drop-shadow(0 -1px 1px rgba(90,70,45,.13));
-}
-/* hairline where the panels meet */
-.env-front::after{
-  content:""; position:absolute; inset:0;
-  background:
-    linear-gradient(to bottom right, transparent calc(50% - .5px), rgba(120,96,62,.16) 50%, transparent calc(50% + .5px)) no-repeat,
-    linear-gradient(to bottom left,  transparent calc(50% - .5px), rgba(120,96,62,.16) 50%, transparent calc(50% + .5px)) no-repeat;
-  background-size:100% 94%, 100% 94%;
-  opacity:.9;
-}
-
-/* — the flap — */
-.env-flap{
-  position:absolute; left:0; top:0; width:100%; height:59%;
-  transform-origin:top center; transform-style:preserve-3d;
-  z-index:40;
-  transform:perspective(1700px) rotateX(0deg);
-  transition:transform 1.15s var(--ease), z-index 0s .5s;
-}
-.env-flap.open{ transform:perspective(1700px) rotateX(-168deg); z-index:5; }
-.flap-face{
-  position:absolute; inset:0;
-  backface-visibility:hidden; -webkit-backface-visibility:hidden;
-  clip-path:polygon(0 0, 100% 0, 50% 100%);
-}
-.flap-outer{
-  background:linear-gradient(178deg, #fbf5eb 0%, var(--paper-warm) 62%, var(--paper-deep) 100%);
-  filter:drop-shadow(0 2px 2px rgba(90,70,45,.20));
-}
-.flap-inner{
-  transform:rotateX(180deg);
-  background:linear-gradient(178deg, var(--paper-deep) 0%, var(--paper-cool) 55%, var(--paper-warm) 100%);
-}
-
-/* — wax seal — */
-.seal{
-  position:absolute; left:50%; top:59%; z-index:50;
-  width:clamp(46px,13.5%,60px); aspect-ratio:1;
-  transform:translate(-50%,-52%) rotate(-6deg);
-  transition:transform .55s var(--ease), opacity .5s ease;
-}
-.seal.broken{ transform:translate(-50%,4%) rotate(16deg) scale(.86); opacity:0; }
-.seal span{
-  position:absolute; inset:0;
-  display:grid; place-items:center;
-  border-radius:47% 53% 50% 50% / 52% 48% 52% 48%;
-  background:
-    radial-gradient(70% 70% at 32% 26%, var(--wax-hi) 0%, var(--wax) 46%, var(--wax-lo) 100%);
-  box-shadow:
-    0 2px 5px rgba(50,14,14,.42),
-    inset 0 -2px 4px rgba(0,0,0,.36),
-    inset 0 2px 3px rgba(255,255,255,.22);
-  font-family:var(--display); font-size:.95rem; font-weight:500;
-  letter-spacing:.06em; color:rgba(255,235,225,.80);
-  text-shadow:0 1px 0 rgba(0,0,0,.35);
-}
-
-/* ═══════════════════════════  opening  ═══════════════════════ */
-.envelope{ cursor:pointer; }
-.envelope:focus-visible{ outline:2px solid var(--ink); outline-offset:10px; }
-
-.open-btn{
-  cursor:pointer; font-family:var(--body);
-  font-size:.72rem; letter-spacing:.24em; text-transform:uppercase;
-  color:var(--ink-soft); background:transparent;
-  border:0; border-bottom:1px solid var(--rule);
-  padding:.5rem .3rem .45rem;
-  transition:color .35s var(--ease), border-color .35s var(--ease), opacity .5s ease;
-}
-.open-btn:hover,.open-btn:focus-visible{ color:var(--ink); border-bottom-color:var(--ink); outline:none; }
-.open-btn[disabled]{ opacity:.5; pointer-events:none; }
-
 /* ══════════════════════════  buttons  ═════════════════════════ */
 .btn{
   display:inline-block; cursor:pointer;
@@ -229,29 +111,23 @@ body.tint-light .backdrop::after{
 .card{
   position:fixed; left:50%; top:50%; z-index:20;
   width:min(90vw,520px);
-  transform:translate(-50%,-50%) translateY(var(--c-y-in)) scale(var(--c-scale));
-  opacity:0; visibility:hidden;
+  max-height:94vh; overflow-y:auto; overscroll-behavior:contain;
+  transform:translate(-50%,-50%) translateY(14px);
+  opacity:0;
   background:linear-gradient(172deg,#fdf8f0 0%, var(--paper) 55%, #f2e9da 100%);
   box-shadow:
     0 1px 0 rgba(255,255,255,.9) inset,
     0 34px 60px -26px rgba(70,52,32,.55),
     0 4px 14px -6px rgba(70,52,32,.30);
-  clip-path:inset(0 0 var(--c-clip-in) 0);
-  transition:transform 1.05s var(--ease), clip-path 1.05s var(--ease), opacity .5s ease;
+  transition:opacity .8s ease, transform .8s var(--ease);
 }
-.card.staged{ opacity:1; visibility:visible; }
-.card.risen{
-  transform:translate(-50%,-50%) translateY(var(--c-y-up)) scale(var(--c-scale));
-  clip-path:inset(0 0 var(--c-clip-up) 0);
-}
-.card.open{
-  z-index:60;
-  transform:translate(-50%,-50%) scale(1);
-  clip-path:inset(-14%);            /* negative, so the drop shadow survives */
-  /* the clip opens well before the envelope has finished fading, so the card's
-     lower edge is never seen as a hard cut against the bare background */
-  transition:transform 1.05s var(--ease), clip-path .38s var(--ease), opacity .5s ease;
-  max-height:94vh; overflow-y:auto; overscroll-behavior:contain;
+body.ready .card{ opacity:1; transform:translate(-50%,-50%); }
+
+/* if content.json cannot be fetched at all, say so rather than showing nothing */
+body.failed::after{
+  content:"The invitation could not be loaded.";
+  position:fixed; inset:0; display:grid; place-items:center;
+  font-family:var(--body); font-style:italic; color:var(--ink-soft);
 }
 
 .card-inner{
@@ -278,25 +154,20 @@ body.tint-light .backdrop::after{
 }
 .title-sm{ font-size:clamp(1.7rem,5vw,2.2rem); }
 .subtitle{
-  margin:.75rem 0 0; font-family:var(--display); font-style:italic;
-  font-size:clamp(1.05rem,3.3vw,1.3rem); color:var(--ink-soft);
+  margin:.7rem 0 0; font-family:var(--display); font-style:normal;
+  font-size:clamp(1.05rem,3.3vw,1.28rem); color:var(--ink-soft);
 }
-.ornament{
-  display:flex; align-items:center; justify-content:center; gap:.8rem;
-  margin:1.3rem auto; width:min(100%,190px); color:var(--ink-faint);
-}
-.ornament i{ flex:1; height:1px; background:var(--rule); }
-.ornament span{ font-size:.5rem; line-height:1; }
+.rule{ height:1px; background:var(--rule); margin:1.35rem 0 1.5rem; opacity:.85; }
 /* Tuned for wrapped sentences, not single short lines. The leading inside a
    sentence must be tighter than the gap between sentences, or a two-line
    sentence reads as two separate ones. */
 .lines{
   margin:0; font-size:1.02rem; line-height:1.7; color:var(--ink);
-  text-wrap:pretty;
+  text-wrap:balance;
 }
 .lines > div + div{ margin-top:.72rem; }
 .footer-line{
-  margin:1.9rem 0 0; font-family:var(--display); font-style:italic;
+  margin:1.6rem 0 0; font-family:var(--display); font-style:italic;
   font-size:1rem; color:var(--ink-soft);
 }
 .actions{ margin-top:1.8rem; display:flex; justify-content:center; }
@@ -330,14 +201,15 @@ body.tint-light .backdrop::after{
 }
 .segmented input{ position:absolute; opacity:0; pointer-events:none; }
 .segmented label{
-  flex:1; margin:0; padding:.72rem .3rem; cursor:pointer; z-index:2;
+  flex:1 1 0; min-width:0;            /* equal thirds, so the highlight lines up */
+  margin:0; padding:.72rem .3rem; cursor:pointer; z-index:2;
   display:flex; align-items:center; justify-content:center; text-align:center;
   min-height:2.9em; line-height:1.25;
   font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
   color:var(--ink-soft); transition:color .35s var(--ease);
 }
 @media (max-width:430px){
-  .segmented label{ letter-spacing:.08em; font-size:.66rem; padding:.72rem .15rem; }
+  .segmented label{ letter-spacing:.04em; font-size:.62rem; padding:.72rem .1rem; }
 }
 .segmented-thumb{
   position:absolute; z-index:1; top:0; bottom:0; left:0; width:33.3333%;

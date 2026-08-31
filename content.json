@@ -30,7 +30,7 @@
     "image": "assets/backdrop.jpg",
     "tint": "light",
     "dim": 0.42,
-    "blur": 4
+    "blur": 6
   },
   "music": {
     "volume": 0.3,
