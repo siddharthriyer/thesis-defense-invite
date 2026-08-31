@@ -189,32 +189,20 @@ body.tint-light .backdrop::after{
   text-shadow:0 1px 0 rgba(0,0,0,.35);
 }
 
-/* ══════════════════════════  the gate  ════════════════════════ */
-.gate{ width:min(88vw,340px); text-align:center; }
-.gate-label{
-  display:block;
-  font-family:var(--body); font-style:italic;
-  font-size:.9rem; color:var(--ink-soft); margin-bottom:1.05rem;
-}
-.gate-row{ display:flex; align-items:flex-end; gap:.85rem; }
-#pw{
-  flex:1; min-width:0;
-  font-family:var(--display); font-size:1.18rem; letter-spacing:.32em;
-  color:var(--ink); background:transparent;
+/* ═══════════════════════════  opening  ═══════════════════════ */
+.envelope{ cursor:pointer; }
+.envelope:focus-visible{ outline:2px solid var(--ink); outline-offset:10px; }
+
+.open-btn{
+  cursor:pointer; font-family:var(--body);
+  font-size:.72rem; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ink-soft); background:transparent;
   border:0; border-bottom:1px solid var(--rule);
-  padding:.42rem .1rem .5rem; outline:none;
-  transition:border-color .3s ease;
+  padding:.5rem .3rem .45rem;
+  transition:color .35s var(--ease), border-color .35s var(--ease), opacity .5s ease;
 }
-#pw:focus{ border-bottom-color:var(--ink); }
-.gate.wrong{ animation:shake .42s ease; }
-.gate.wrong #pw{ border-bottom-color:var(--wax); }
-@keyframes shake{
-  10%,90%{transform:translateX(-2px)} 30%,70%{transform:translateX(5px)}
-  50%{transform:translateX(-6px)} 100%{transform:none}
-}
-.gate-err{
-  margin:.95rem 0 0; font-size:.82rem; font-style:italic; color:var(--wax);
-}
+.open-btn:hover,.open-btn:focus-visible{ color:var(--ink); border-bottom-color:var(--ink); outline:none; }
+.open-btn[disabled]{ opacity:.5; pointer-events:none; }
 
 /* ══════════════════════════  buttons  ═════════════════════════ */
 .btn{

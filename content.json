@@ -1,0 +1,53 @@
+{
+  "card": {
+    "eyebrow": "MIT DEPARTMENT OF BIOLOGICAL ENGINEERING",
+    "title": "Siddharth's Thesis Defense Seminar",
+    "subtitle": "Exploring Viral Diversity for In Vivo Delivery of Genetic Medicine",
+    "lines": [
+      "I will be defending my thesis on Tuesday, September 29th, 2026.",
+      "Public Defense Seminar: 3:30 PM to 4:30 PM.",
+      "In-person location: Cortex Room at 201 Brookline Ave, Boston, Massachusetts.",
+      "There is also a zoom link if you cannot make it in person.",
+      "I would love to see you there and share my work of the last five years with you."
+    ],
+    "footer": "After the private section of the defense, there will be refreshments in the penthouse."
+  },
+  "event": {
+    "title": "Thesis Defense",
+    "start": "2026-09-29T15:30:00",
+    "end": "2026-09-29T16:30:00",
+    "timezone": "America/New_York",
+    "locationInPerson": "Cortex Room, 201 Brookline Ave, Boston, MA",
+    "locationRemote": "Online — the joining link is in your confirmation email",
+    "description": "Siddharth Iyer's Thesis Defense Seminar"
+  },
+  "rsvp": {
+    "mode": "appsscript",
+    "endpoint": "https://script.google.com/macros/s/AKfycbw6NE6BloQAN6QyDC2StS4L0IQuosFjYN5px_7y5f4JXxHUqjHt-yeqnjo2WA9onyyC/exec",
+    "fallbackEmail": "siddharth.iyer@wyss.harvard.edu"
+  },
+  "background": {
+    "image": "assets/backdrop.jpg",
+    "tint": "light",
+    "dim": 0.42,
+    "blur": 4
+  },
+  "music": {
+    "volume": 0.3,
+    "shuffle": false,
+    "tracks": [
+      {
+        "src": "assets/audio/nocturne-op27-no2.mp3",
+        "title": "Nocturne in D♭ major, Op. 27 No. 2"
+      },
+      {
+        "src": "assets/audio/barcarolle-op60.mp3",
+        "title": "Barcarolle in F♯ major, Op. 60"
+      },
+      {
+        "src": "assets/audio/ballade-op52.mp3",
+        "title": "Ballade No. 4 in F minor, Op. 52"
+      }
+    ]
+  }
+}

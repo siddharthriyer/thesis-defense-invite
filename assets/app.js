@@ -1,89 +1,37 @@
 /* ═══════════════════════════════════════════════════════════════
-   Invitation — password gate, envelope choreography, RSVP.
-   The invite text is AES-256-GCM encrypted; nothing readable
-   ships in the repo. Sealed by seal.py, opened here.
+   Invitation — envelope choreography, music, RSVP.
+   The card content is served as plain content.json.
    ═══════════════════════════════════════════════════════════════ */
 
-const $  = (s) => document.querySelector(s);
-const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+const $ = (s) => document.querySelector(s);
 
-let ENC = null;      // encrypted payload
-let C   = null;      // decrypted content, once unlocked
-
-/* ───────────────────────────  crypto  ─────────────────────────── */
-
-async function decrypt(payload, password) {
-  const base = await crypto.subtle.importKey(
-    "raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]
-  );
-  const key = await crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt: b64(payload.kdf.salt),
-      iterations: payload.kdf.iterations, hash: payload.kdf.hash },
-    base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
-  );
-  const plain = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: b64(payload.iv) }, key, b64(payload.data)
-  );
-  return JSON.parse(new TextDecoder().decode(plain));
-}
+let C = null;        // card content, once loaded
 
 /* ────────────────────────────  boot  ──────────────────────────── */
 
 (async function init() {
   try {
-    ENC = await fetch("invite.enc.json", { cache: "no-store" }).then((r) => r.json());
+    C = await fetch("content.json", { cache: "no-store" }).then((r) => r.json());
   } catch {
-    $("#gate-err").textContent = "The invitation could not be loaded.";
-    $("#gate-err").hidden = false;
+    $("#open-btn").textContent = "The invitation could not be loaded";
+    $("#open-btn").disabled = true;
     return;
   }
-
-  // A link may carry the password: …/#k=password
-  const fromHash = new URLSearchParams(location.hash.slice(1)).get("k");
-  const remembered = sessionStorage.getItem("invite-pw");
-  const auto = fromHash || remembered;
-
-  if (auto) {
-    try {
-      C = await decrypt(ENC, auto);
-      sessionStorage.setItem("invite-pw", auto);
-      history.replaceState(null, "", location.pathname + location.search);
-      render();
-      requestAnimationFrame(() => open({ instant: !!remembered && !fromHash }));
-      return;
-    } catch { sessionStorage.removeItem("invite-pw"); }
-  }
-
-  $("#pw").focus();
+  render();
 })();
 
-/* ──────────────────────────  the gate  ────────────────────────── */
+// One handler for the button and the envelope itself, so either opens it.
+let opened = false;
+function openInvitation() {
+  if (opened || !C) return;
+  opened = true;
+  open();
+}
 
-$("#gate").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const pw = $("#pw").value.trim();
-  if (!pw) return;
-
-  const btn = $("#gate-btn");
-  btn.disabled = true;
-  $("#gate-err").hidden = true;
-
-  try {
-    C = await decrypt(ENC, pw);
-  } catch {
-    btn.disabled = false;
-    $("#gate-err").hidden = false;
-    const g = $("#gate");
-    g.classList.remove("wrong");
-    void g.offsetWidth;
-    g.classList.add("wrong");
-    $("#pw").select();
-    return;
-  }
-
-  sessionStorage.setItem("invite-pw", pw);
-  render();
-  open({ instant: false });
+$("#open-btn").addEventListener("click", openInvitation);
+$("#envelope").addEventListener("click", openInvitation);
+$("#envelope").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openInvitation(); }
 });
 
 /* ─────────────────────────  rendering  ────────────────────────── */
@@ -118,8 +66,8 @@ function measure() {
   // envelope's width and clipped at the envelope's bottom edge — the cut lands
   // exactly where the paper ends, so the seam is never visible.
   //
-  // Everything is keyed off the envelope's real rect: the gate sits below it,
-  // which pushes the envelope above the centre of the viewport.
+  // Everything is keyed off the envelope's real rect: the open button sits
+  // below it, which pushes the envelope above the centre of the viewport.
   const card = $("#card");
   const er = $("#envelope").getBoundingClientRect();
 
@@ -148,13 +96,13 @@ function measure() {
   return true;
 }
 
-function open({ instant }) {
+function open() {
   const card = $("#card");
   // A zero-sized viewport (background tab, printing) makes the choreography
   // meaningless — show the card outright instead.
   const measurable = measure();
 
-  if (instant || !measurable) {                       // returning visitor — no theatrics
+  if (!measurable) {
     revealBackdrop();
     startMusic();
     $("#stage").classList.add("gone");
@@ -168,9 +116,8 @@ function open({ instant }) {
 
   const at = (ms, fn) => setTimeout(fn, ms);
 
-  $("#gate").style.transition = "opacity .5s ease";
-  $("#gate").style.opacity = "0";
-  $("#pw").blur();
+  $("#open-btn").style.opacity = "0";
+  $("#open-btn").style.pointerEvents = "none";
 
   startMusic();                                       // still inside the click
 
@@ -201,7 +148,7 @@ function finish() {
 // photograph leaves the plain paper gradient rather than a broken panel.
 //
 // Loading and revealing are kept apart on purpose. The photograph can only
-// start downloading after the payload is decrypted, so on a slow connection it
+// start downloading once the content has loaded, so on a slow connection it
 // may still be in flight when the envelope opens; whichever of the two happens
 // last does the fade, and a late photograph simply eases in behind the card.
 let backdropReady = false, backdropWanted = false;

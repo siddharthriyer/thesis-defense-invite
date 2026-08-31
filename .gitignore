@@ -1,10 +1,9 @@
-# The invitation text and the password live here. Never commit this.
-content.json
+# content.json is now served directly by the page, so it IS committed.
 
 .DS_Store
 
 # Tooling and notes — kept on this machine, not published.
-# The site only needs index.html, assets/, invite.enc.json and .nojekyll.
+# The site only needs index.html, assets/, content.json and .nojekyll.
 README.md
 seal.py
 content.example.json

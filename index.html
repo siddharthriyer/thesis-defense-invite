@@ -18,7 +18,7 @@
 <!-- ─────────────────────────  ENVELOPE  ───────────────────────── -->
 <div class="stage" id="stage">
   <div class="envelope-wrap">
-    <div class="envelope" id="envelope">
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open the invitation">
       <div class="env-back"></div>
 
       <!-- the card lives at document level so it can grow past the envelope -->
@@ -39,16 +39,8 @@
     </div>
   </div>
 
-  <!-- ───────────────────────  PASSWORD GATE  ─────────────────── -->
-  <form class="gate" id="gate" autocomplete="off">
-    <label class="gate-label" for="pw">Enter the password from your invitation</label>
-    <div class="gate-row">
-      <input id="pw" type="password" name="password" spellcheck="false"
-             autocapitalize="off" autocomplete="off" aria-label="Password">
-      <button type="submit" class="btn btn-quiet" id="gate-btn">Open</button>
-    </div>
-    <p class="gate-err" id="gate-err" role="alert" hidden>That isn’t the right password.</p>
-  </form>
+  <!-- opening it stays a click: browsers only let audio start from a gesture -->
+  <button type="button" class="open-btn" id="open-btn">Open</button>
 </div>
 
 <!-- ───────────────────────────  CARD  ─────────────────────────── -->
