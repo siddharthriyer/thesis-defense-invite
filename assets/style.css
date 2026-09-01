@@ -110,7 +110,7 @@ body.tint-light .backdrop::after{
 /* ═══════════════════════════  card  ═══════════════════════════ */
 .card{
   position:fixed; left:50%; top:50%; z-index:20;
-  width:min(90vw,520px);
+  width:min(92vw,620px);
   max-height:94vh; overflow-y:auto; overscroll-behavior:contain;
   transform:translate(-50%,-50%) translateY(14px);
   opacity:0;
@@ -132,7 +132,7 @@ body.failed::after{
 
 .card-inner{
   position:relative;
-  padding:clamp(2.2rem,6vw,2.9rem) clamp(1.9rem,6vw,3.2rem);
+  padding:clamp(2.2rem,6vw,2.9rem) clamp(1.6rem,5vw,2.5rem);
 }
 .card-inner::before{
   content:""; position:absolute; inset:clamp(9px,2.4vw,14px);
@@ -151,6 +151,7 @@ body.failed::after{
 .title{
   margin:0; font-family:var(--display); font-weight:300;
   font-size:clamp(2.1rem,6.4vw,3rem); line-height:1.1; letter-spacing:.005em;
+  text-wrap:balance;                 /* else the last word is left on its own */
 }
 .title-sm{ font-size:clamp(1.7rem,5vw,2.2rem); }
 .subtitle{
