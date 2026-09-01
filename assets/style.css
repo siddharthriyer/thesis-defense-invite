@@ -157,7 +157,10 @@ body.failed::after{
   margin:.7rem 0 0; font-family:var(--display); font-style:normal;
   font-size:clamp(1.05rem,3.3vw,1.28rem); color:var(--ink-soft);
 }
-.rule{ height:1px; background:var(--rule); margin:1.35rem 0 1.5rem; opacity:.85; }
+.rule{
+  height:1px; background:var(--rule); opacity:.85;
+  width:min(100%,150px); margin:1.35rem auto 1.5rem;
+}
 /* Tuned for wrapped sentences, not single short lines. The leading inside a
    sentence must be tighter than the gap between sentences, or a two-line
    sentence reads as two separate ones. */
@@ -167,8 +170,9 @@ body.failed::after{
 }
 .lines > div + div{ margin-top:.72rem; }
 .footer-line{
-  margin:1.6rem 0 0; font-family:var(--display); font-style:italic;
-  font-size:1rem; color:var(--ink-soft);
+  margin:1.5rem 0 0;
+  font-family:var(--body); font-style:normal;
+  font-size:1.02rem; line-height:1.7; color:var(--ink-soft);
 }
 .actions{ margin-top:1.8rem; display:flex; justify-content:center; }
 .actions-split{ gap:.8rem; }

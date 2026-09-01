@@ -405,7 +405,7 @@ function showConfirmation({ name, attendance }) {
   const first = name.split(/\s+/)[0];
   const msg = {
     "in-person": `We’ll see you there, ${first}. A confirmation is on its way to your inbox.`,
-    "remote":    `You’re on the list, ${first}. The joining link is in your inbox and in the calendar entry below.`,
+    "remote":    `You’re on the list, ${first}. The joining link is on its way to your inbox.`,
     "regrets":   `Thank you for letting us know, ${first}. You’ll be missed.`,
   }[attendance];
 
