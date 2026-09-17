@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Siddharth Iyer//Thesis Defense//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:siddharth-iyer-thesis-defense-20260929@invite
+DTSTAMP:20260917T000000Z
+DTSTART;TZID=America/New_York:20260929T153000
+DTEND;TZID=America/New_York:20260929T163000
+SUMMARY:Siddharth Iyer Thesis Defense
+DESCRIPTION:Exploring Viral Diversity for Delivery of Genetic Medicine\n\nJoin Zoom Meeting: https://mit.zoom.us/j/99886816912?pwd=b5NPb1ckZbduER8MauMTMyLbGCm583.1
+LOCATION:Cortex Room\, 4th floor\, Wyss Institute
+URL:https://mit.zoom.us/j/99886816912?pwd=b5NPb1ckZbduER8MauMTMyLbGCm583.1
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR
